@@ -1,0 +1,11 @@
+div {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  background: green;
+}
+
+.blank {
+  background: transparent;
+  pointer-events: none;
+}

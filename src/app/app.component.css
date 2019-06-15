@@ -1,0 +1,10 @@
+.app {
+  width: auto;
+  margin: 10px;
+}
+
+.gaem-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
