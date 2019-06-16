@@ -30,6 +30,10 @@ export class GameAreaComponent implements OnInit, OnChanges {
     this.gameStart(4);
   }
 
+  pieceAction() {
+    this.gameCondition.clearCheck(this.pieces);
+  }
+
   private makePiece(side: number): Piece[] {
     const pieces = [];
     for (let i = 0; i < (side * side); i++) {
@@ -80,5 +84,10 @@ export class GameAreaComponent implements OnInit, OnChanges {
 
   private shuffle(): void {
     this.children.toArray()[this.children.length - 2].onTap();
+    console.log(this.pieces);
+    console.log(this.pieces.sort((a, b) => {
+      const diff = a.position.y - b.position.y;
+      return (diff === 0) ? (a.position.x - b.position.x) : diff;
+    }));
   }
 }

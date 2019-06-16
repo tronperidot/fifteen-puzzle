@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GameConditionService, nextMove } from 'src/app/services/game-condition.service';
 
 const DIVIDE = 10;
@@ -17,7 +17,7 @@ export interface Piece {
     height: string,
   };
   base: {
-    oneSize: number;
+    oneSize: number; // TODO: gameCondition
   };
   className: string;
 }
@@ -29,6 +29,8 @@ export interface Piece {
 })
 export class PieceComponent implements OnInit {
   @Input() piece: Piece;
+  @Output() action = new EventEmitter<string>();
+
   private blank: Piece;
 
   constructor(
@@ -46,6 +48,8 @@ export class PieceComponent implements OnInit {
     if (this.isBlank(this.piece)) { return; }
     const move = nextMove(this.piece.position, this.blank.position);
     switch (move) {
+      case 'none':
+        return;
       case 'up':
         this.moveUp();
         break;
@@ -59,6 +63,7 @@ export class PieceComponent implements OnInit {
         this.moveRight();
         break;
     }
+    this.action.emit('onTap');
   }
 
   private moveLeft() {

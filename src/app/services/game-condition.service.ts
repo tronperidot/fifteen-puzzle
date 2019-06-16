@@ -22,6 +22,19 @@ export class GameConditionService {
     this.oneSide$.next(side);
     this.status$.next('playing');
   }
+
+  // 並び方はmakePieceに依存している
+  clearCheck(pieces: Piece[]): void {
+    let idx = 1;
+    const isValid = pieces.sort((a, b) => {
+      const diff = a.position.y - b.position.y;
+      return (diff === 0) ? (a.position.x - b.position.x) : diff;
+    }).every((p) => p.id === idx++);
+    if (isValid) {
+      this.status$.next('clear');
+      console.log('ゲームクリアー');
+    }
+  }
 }
 
 export function nextMove(piece: PiecePosition, blank: PiecePosition): MoveActionType {
