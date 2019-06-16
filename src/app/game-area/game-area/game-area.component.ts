@@ -53,8 +53,6 @@ export class GameAreaComponent implements OnInit {
         height: `${oneSize}px`,
       },
       base: {
-        top,
-        left,
         oneSize,
       },
       className: 'piece',

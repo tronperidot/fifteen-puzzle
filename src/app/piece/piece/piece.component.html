@@ -1,5 +1,5 @@
 <div [ngStyle]="piece.style" (click)="onTap()" [ngClass]="piece.className">
-  <p>
-    piece works!
+  <p *ngIf="!isBlank(piece)">
+    {{ piece.id }}
   </p>
 </div>

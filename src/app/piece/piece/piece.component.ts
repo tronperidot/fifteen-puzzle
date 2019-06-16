@@ -16,9 +16,7 @@ export interface Piece {
     width: string,
     height: string,
   };
-  base: { // ひどい
-    top: number;
-    left: number;
+  base: {
     oneSize: number;
   };
   className: string;
@@ -37,7 +35,7 @@ export class PieceComponent implements OnInit {
     gameCondition: GameConditionService,
   ) {
     gameCondition.pieces$.subscribe((pieces) => {
-      this.blank = pieces.find((p) => p.className === 'blank');
+      this.blank = pieces.find((p) => this.isBlank(p));
     });
   }
 
@@ -45,7 +43,7 @@ export class PieceComponent implements OnInit {
   }
 
   onTap() {
-    if (this.piece.className === 'blank') { return; }
+    if (this.isBlank(this.piece)) { return; }
     const move = nextMove(this.piece.position, this.blank.position);
     switch (move) {
       case 'up':
@@ -117,5 +115,9 @@ export class PieceComponent implements OnInit {
         this.piece.style.top = `${pos}px`;
       }, 10 * val);
     }
+  }
+
+  private isBlank(piece: Piece): boolean {
+    return piece.className === 'blank';
   }
 }
