@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GameConditionService, nextMove } from 'src/app/services/game-condition.service';
 
-const DIVIDE = 1;
+const DIVIDE = 10;
 
 export interface PiecePosition {
   x: number;

@@ -1,5 +1,6 @@
-<div>
+<div [ngStyle]="displayStyle">
   <ng-container  *ngFor="let piece of pieces">
     <app-piece [piece]="piece"></app-piece>
   </ng-container>
 </div>
+<button (click)="onStart()">start</button>
