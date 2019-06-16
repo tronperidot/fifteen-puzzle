@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Piece } from 'src/app/piece/piece/piece.component';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
+import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
 import { GameConditionService } from 'src/app/services/game-condition.service';
 
 @Component({
@@ -7,23 +7,27 @@ import { GameConditionService } from 'src/app/services/game-condition.service';
   templateUrl: './game-area.component.html',
   styleUrls: ['./game-area.component.css']
 })
-export class GameAreaComponent implements OnInit {
+export class GameAreaComponent implements OnInit, OnChanges {
   @Input() gameWidth: number;
+  @ViewChildren(PieceComponent) children: QueryList<PieceComponent>;
+  displayStyle = this.displayStyle = this.buildDisplayStyle(this.gameWidth);
 
   pieces: Piece[];
 
   constructor(
     private gameCondition: GameConditionService,
-  ) {
-    this.gameCondition.oneSide$.subscribe((side) => {
-      this.pieces = this.makePiece(side);
-      this.gameCondition.setPieces(this.pieces);
-    });
+  ) { }
+
+  ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.gameWidth) {
+      this.displayStyle = this.buildDisplayStyle(this.gameWidth);
+    }
   }
 
-  ngOnInit() {
-    this.gameStart();
-    // console.log(this.pieces);
+  onStart() {
+    this.gameStart(4);
   }
 
   private makePiece(side: number): Piece[] {
@@ -59,7 +63,22 @@ export class GameAreaComponent implements OnInit {
     };
   }
 
-  private gameStart(): void {
-    this.gameCondition.setOneSide(4);
+  private buildDisplayStyle(gameWidth: number) {
+    return {
+      width: `${gameWidth}px`,
+      height: `${gameWidth}px`,
+    };
+  }
+
+  private gameStart(side: number): void {
+    this.pieces = this.makePiece(side);
+    this.gameCondition.gameStart(this.pieces, side);
+    setTimeout(() => {
+      this.shuffle();
+    }, 1);
+  }
+
+  private shuffle(): void {
+    this.children.toArray()[this.children.length - 2].onTap();
   }
 }

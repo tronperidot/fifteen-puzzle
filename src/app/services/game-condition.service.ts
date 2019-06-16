@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Subject, ReplaySubject } from 'rxjs';
+import { Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { Piece, PiecePosition } from '../piece/piece/piece.component';
 
 export type MoveActionType = 'up' | 'down' | 'left' | 'right' | 'none';
+export type GameStatus = 'wait' | 'playing' | 'clear';
 
 @Injectable({
   providedIn: 'root'
@@ -11,15 +12,15 @@ export class GameConditionService {
 
   readonly pieces$: Subject<Piece[]> = new ReplaySubject<Piece[]>(1);
   readonly oneSide$: Subject<number> = new ReplaySubject<number>(1);
+  readonly status$: Subject<GameStatus> = new BehaviorSubject<GameStatus>('wait');
+
 
   constructor() { }
 
-  setPieces(pieces: Piece[]): void {
+  gameStart(pieces: Piece[], side: number): void {
     this.pieces$.next(pieces);
-  }
-
-  setOneSide(side: number): void {
     this.oneSide$.next(side);
+    this.status$.next('playing');
   }
 }
 
