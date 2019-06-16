@@ -3,7 +3,7 @@ import { Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { Piece, PiecePosition } from '../piece/piece/piece.component';
 
 export type MoveActionType = 'up' | 'down' | 'left' | 'right' | 'none';
-export type GameStatus = 'wait' | 'playing' | 'clear';
+export type GameStatus = 'wait' | 'start' | 'playing' | 'clear';
 
 @Injectable({
   providedIn: 'root'
@@ -13,18 +13,25 @@ export class GameConditionService {
   readonly pieces$: Subject<Piece[]> = new ReplaySubject<Piece[]>(1);
   readonly oneSide$: Subject<number> = new ReplaySubject<number>(1);
   readonly status$: Subject<GameStatus> = new BehaviorSubject<GameStatus>('wait');
+  private status: GameStatus;
 
-
-  constructor() { }
+  constructor() {
+    this.status$.subscribe((s) => this.status = s);
+  }
 
   gameStart(pieces: Piece[], side: number): void {
     this.pieces$.next(pieces);
     this.oneSide$.next(side);
+    this.status$.next('start');
+  }
+
+  gamePlaying(): void {
     this.status$.next('playing');
   }
 
   // 並び方はmakePieceに依存している
   clearCheck(pieces: Piece[]): void {
+    if (this.status !== 'playing') { return; }
     let idx = 1;
     const isValid = pieces.sort((a, b) => {
       const diff = a.position.y - b.position.y;
