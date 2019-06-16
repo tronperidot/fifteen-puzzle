@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GameConditionService, nextMove } from 'src/app/services/game-condition.service';
-
-const DIVIDE = 10;
+import { CONFIG } from 'src/app/util/constants';
 
 export interface PiecePosition {
   x: number;
@@ -20,6 +19,11 @@ export interface Piece {
     oneSize: number; // TODO: gameCondition
   };
   className: string;
+}
+
+interface Moving {
+  position: 'top' | 'left';
+  vector: -1 | 1;
 }
 
 @Component({
@@ -67,58 +71,44 @@ export class PieceComponent implements OnInit {
   }
 
   private moveLeft() {
-    const { base } = this.piece;
-    const oneSize = base.oneSize / DIVIDE;
     this.piece.position.x--;
     this.blank.position.x++;
-    const left: number = parseInt(this.piece.style.left.replace('px', ''), 10);
-    for (let val = 1; val <= DIVIDE; val++) {
-      setTimeout(() => {
-        const pos = left + (val * oneSize * -1);
-        this.piece.style.left = `${pos}px`;
-      }, 10 * val);
-    }
+    const moving = { position: 'left', vector: -1 } as Moving;
+    this.slide(moving, CONFIG.slideTime);
   }
 
   private moveRight() {
-    const { base } = this.piece;
-    const oneSize = base.oneSize / DIVIDE;
     this.piece.position.x++;
     this.blank.position.x--;
-    const left: number = parseInt(this.piece.style.left.replace('px', ''), 10);
-    for (let val = 1; val <= DIVIDE; val++) {
-      setTimeout(() => {
-        const pos = left + (val * oneSize);
-        this.piece.style.left = `${pos}px`;
-      }, 10 * val);
-    }
+    const moving = { position: 'left', vector: 1 } as Moving;
+    this.slide(moving, CONFIG.slideTime);
   }
 
   private moveUp() {
-    const { base } = this.piece;
-    const oneSize = base.oneSize / DIVIDE;
     this.piece.position.y++;
     this.blank.position.y--;
-    const top: number = parseInt(this.piece.style.top.replace('px', ''), 10);
-    for (let val = 1; val <= DIVIDE; val++) {
-      setTimeout(() => {
-        const pos = top + (val * oneSize);
-        this.piece.style.top = `${pos}px`;
-      }, 10 * val);
-    }
+    const moving = { position: 'top', vector: 1 } as Moving;
+    this.slide(moving, CONFIG.slideTime);
   }
 
   private moveDown() {
-    const { base } = this.piece;
-    const oneSize = base.oneSize / DIVIDE;
     this.piece.position.y--;
     this.blank.position.y++;
-    const top: number = parseInt(this.piece.style.top.replace('px', ''), 10);
-    for (let val = 1; val <= DIVIDE; val++) {
+    const moving = { position: 'top', vector: -1 } as Moving;
+    this.slide(moving, CONFIG.slideTime);
+  }
+
+  private slide(moving: Moving, slideTime: number) {
+    const frame = 10;
+    const divide  = slideTime / frame;
+    const { base } = this.piece;
+    const oneSize = base.oneSize / divide;
+    const basePos: number = parseInt(this.piece.style[moving.position].replace('px', ''), 10);
+    for (let val = 1; val <= divide; val++) {
       setTimeout(() => {
-        const pos = top + (val * oneSize * -1);
-        this.piece.style.top = `${pos}px`;
-      }, 10 * val);
+        const pos = basePos + (val * oneSize * moving.vector);
+        this.piece.style[moving.position] = `${pos}px`;
+      }, frame * val);
     }
   }
 

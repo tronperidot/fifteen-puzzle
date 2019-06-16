@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
 import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
 import { GameConditionService } from 'src/app/services/game-condition.service';
+import { CONFIG } from 'src/app/util/constants';
 
 @Component({
   selector: 'app-game-area',
@@ -79,15 +80,22 @@ export class GameAreaComponent implements OnInit, OnChanges {
     this.gameCondition.gameStart(this.pieces, side);
     setTimeout(() => {
       this.shuffle();
+      this.gameCondition.gamePlaying();
     }, 1);
   }
 
   private shuffle(): void {
-    this.children.toArray()[this.children.length - 2].onTap();
-    console.log(this.pieces);
-    console.log(this.pieces.sort((a, b) => {
-      const diff = a.position.y - b.position.y;
-      return (diff === 0) ? (a.position.x - b.position.x) : diff;
-    }));
+    const children = this.children.toArray();
+    for (let idx = 0; idx < 100; idx++) {
+      setTimeout(() => {
+        children[this.random()].onTap();
+      }, (CONFIG.slideTime + 10) * idx);
+    }
+  }
+
+  private random(): number {
+    const min = 1 - 1;
+    const max = (4 * 4) - 1;
+    return Math.floor( Math.random() * (max + 1 - min) ) + min;
   }
 }
