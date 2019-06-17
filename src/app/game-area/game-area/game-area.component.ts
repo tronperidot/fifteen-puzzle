@@ -86,12 +86,15 @@ export class GameAreaComponent implements OnInit, OnChanges {
 
   private shuffle(): void {
     const children = this.children.toArray();
+    const history: number[] = [];
     for (let idx = 0; idx < 50; idx++) {
       setTimeout(() => {
         const pieces = this.pieces.sort(pieceSort);
         const blankIdx = pieces.findIndex(isBlank);
-        const canMoving = canMovingIndex(blankIdx, CONFIG.side);
+        // 自然な感じになるように一つ前のポジションにならないようにさせる。
+        const canMoving = canMovingIndex(blankIdx, CONFIG.side).filter((p) => p !== history[history.length - 2]);
         const pos = canMoving[this.random(canMoving.length)];
+        history.push(pos);
         const tapPiece = pieces[pos];
         children.find((c) => c.piece.id === tapPiece.id).onTap();
       }, (CONFIG.slideTime + 10) * idx);
