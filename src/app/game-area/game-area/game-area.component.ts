@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
 import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
-import { GameConditionService } from 'src/app/services/game-condition.service';
+import { GameConditionService, pieceSort, isBlank, canMovingIndex } from 'src/app/services/game-condition.service';
 import { CONFIG } from 'src/app/util/constants';
 
 @Component({
@@ -28,7 +28,7 @@ export class GameAreaComponent implements OnInit, OnChanges {
   }
 
   onStart() {
-    this.gameStart(4);
+    this.gameStart(CONFIG.side);
   }
 
   pieceAction() {
@@ -86,16 +86,21 @@ export class GameAreaComponent implements OnInit, OnChanges {
 
   private shuffle(): void {
     const children = this.children.toArray();
-    for (let idx = 0; idx < 100; idx++) {
+    for (let idx = 0; idx < 50; idx++) {
       setTimeout(() => {
-        children[this.random()].onTap();
+        const pieces = this.pieces.sort(pieceSort);
+        const blankIdx = pieces.findIndex(isBlank);
+        const canMoving = canMovingIndex(blankIdx, CONFIG.side);
+        const pos = canMoving[this.random(canMoving.length)];
+        const tapPiece = pieces[pos];
+        children.find((c) => c.piece.id === tapPiece.id).onTap();
       }, (CONFIG.slideTime + 10) * idx);
     }
   }
 
-  private random(): number {
-    const min = 1 - 1;
-    const max = (4 * 4) - 1;
-    return Math.floor( Math.random() * (max + 1 - min) ) + min;
+  private random(size: number): number {
+    const min = 0;
+    const max = size - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

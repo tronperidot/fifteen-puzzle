@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { GameConditionService, nextMove } from 'src/app/services/game-condition.service';
+import { GameConditionService, nextMove, isBlank } from 'src/app/services/game-condition.service';
 import { CONFIG } from 'src/app/util/constants';
 
 export interface PiecePosition {
@@ -41,7 +41,7 @@ export class PieceComponent implements OnInit {
     gameCondition: GameConditionService,
   ) {
     gameCondition.pieces$.subscribe((pieces) => {
-      this.blank = pieces.find((p) => this.isBlank(p));
+      this.blank = pieces.find((p) => isBlank(p));
     });
   }
 
@@ -49,7 +49,7 @@ export class PieceComponent implements OnInit {
   }
 
   onTap() {
-    if (this.isBlank(this.piece)) { return; }
+    if (isBlank(this.piece)) { return; }
     const move = nextMove(this.piece.position, this.blank.position);
     switch (move) {
       case 'none':
@@ -112,7 +112,7 @@ export class PieceComponent implements OnInit {
     }
   }
 
-  private isBlank(piece: Piece): boolean {
-    return piece.className === 'blank';
+  isBlank(piece: Piece): boolean {
+    return isBlank(piece);
   }
 }

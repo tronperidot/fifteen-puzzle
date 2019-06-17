@@ -33,10 +33,7 @@ export class GameConditionService {
   clearCheck(pieces: Piece[]): void {
     if (this.status !== 'playing') { return; }
     let idx = 1;
-    const isValid = pieces.sort((a, b) => {
-      const diff = a.position.y - b.position.y;
-      return (diff === 0) ? (a.position.x - b.position.x) : diff;
-    }).every((p) => p.id === idx++);
+    const isValid = pieces.sort(pieceSort).every((p) => p.id === idx++);
     if (isValid) {
       this.status$.next('clear');
       console.log('ゲームクリアー');
@@ -70,4 +67,23 @@ export function oppositeDirection(move: MoveActionType): MoveActionType {
       return 'left';
   }
   return 'none';
+}
+
+export function pieceSort(a: Piece, b: Piece): number {
+  const diff = a.position.y - b.position.y;
+  return (diff === 0) ? (a.position.x - b.position.x) : diff;
+}
+
+export function canMovingIndex(index: number, side: number): number[] {
+  // 上 左 右 下
+  return [
+    ((index - side) >= 0) ? index - side : undefined,
+    ((index % side) !== 0) ? index - 1 : undefined,
+    (((index + 1) % side) !== 0) ? index + 1 : undefined,
+    ((index + side) <= (side * side) - 1) ? index + side : undefined,
+  ].filter((val) => val !== undefined);
+}
+
+export function isBlank(piece: Piece): boolean {
+  return piece.className === 'blank';
 }
