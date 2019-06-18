@@ -12,7 +12,9 @@
     "importHelpers": true,
     "target": "es5",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "node_modules/phaser/types/phaser.d.ts",
+      "src/typing.d.ts"
     ],
     "lib": [
       "es2018",

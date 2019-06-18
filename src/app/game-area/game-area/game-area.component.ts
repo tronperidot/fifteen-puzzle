@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
 import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
 import { GameConditionService, pieceSort, isBlank, canMovingIndex } from 'src/app/services/game-condition.service';
+import * as Phaser from 'phaser';
 
 @Component({
   selector: 'app-game-area',
@@ -14,17 +15,35 @@ export class GameAreaComponent implements OnInit, OnChanges {
   selectedSideValue = 3;
 
   pieces: Piece[];
+  game: Phaser.Game;
 
   constructor(
     private gameCondition: GameConditionService,
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const config: Phaser.Types.Core.GameConfig = {
+      width: 600,
+      height: 600,
+      type: Phaser.AUTO,
+      parent: 'content',
+      scene: { preload: this.preload, create: this.create },
+    };
+    this.game = new Phaser.Game(config);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.gameWidth) {
       this.displayStyle = this.buildDisplayStyle(this.gameWidth);
     }
+  }
+
+  preload() {
+    console.log('preload');
+  }
+
+  create() {
+    console.log('create');
   }
 
   onStart() {
