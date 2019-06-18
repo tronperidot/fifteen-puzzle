@@ -3,4 +3,9 @@
     <app-piece [piece]="piece" (action)="pieceAction()"></app-piece>
   </ng-container>
 </div>
+<select [(ngModel)]="selectedSideValue">
+  <option [value]="3">3</option>
+  <option [value]="4">4</option>
+  <option [value]="5">5</option>
+</select>
 <button (click)="onStart()">start</button>

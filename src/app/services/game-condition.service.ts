@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { Piece, PiecePosition } from '../piece/piece/piece.component';
+import { Config, CONFIG } from '../util/constants';
 
 export type MoveActionType = 'up' | 'down' | 'left' | 'right' | 'none';
 export type GameStatus = 'wait' | 'start' | 'playing' | 'clear';
@@ -14,9 +15,11 @@ export class GameConditionService {
   readonly oneSide$: Subject<number> = new ReplaySubject<number>(1);
   readonly status$: Subject<GameStatus> = new BehaviorSubject<GameStatus>('wait');
   private status: GameStatus;
+  readonly config: Config;
 
   constructor() {
     this.status$.subscribe((s) => this.status = s);
+    this.config = Object.assign({}, CONFIG);
   }
 
   gameStart(pieces: Piece[], side: number): void {
@@ -36,7 +39,7 @@ export class GameConditionService {
     const isValid = pieces.sort(pieceSort).every((p) => p.id === idx++);
     if (isValid) {
       this.status$.next('clear');
-      console.log('ゲームクリアー');
+      alert('ゲームクリアー');
     }
   }
 }

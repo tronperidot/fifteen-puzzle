@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GameConditionService, nextMove, isBlank } from 'src/app/services/game-condition.service';
-import { CONFIG } from 'src/app/util/constants';
 
 export interface PiecePosition {
   x: number;
@@ -38,7 +37,7 @@ export class PieceComponent implements OnInit {
   private blank: Piece;
 
   constructor(
-    gameCondition: GameConditionService,
+    private gameCondition: GameConditionService,
   ) {
     gameCondition.pieces$.subscribe((pieces) => {
       this.blank = pieces.find((p) => isBlank(p));
@@ -74,28 +73,28 @@ export class PieceComponent implements OnInit {
     this.piece.position.x--;
     this.blank.position.x++;
     const moving = { position: 'left', vector: -1 } as Moving;
-    this.slide(moving, CONFIG.slideTime);
+    this.slide(moving, this.slideTime);
   }
 
   private moveRight() {
     this.piece.position.x++;
     this.blank.position.x--;
     const moving = { position: 'left', vector: 1 } as Moving;
-    this.slide(moving, CONFIG.slideTime);
+    this.slide(moving, this.slideTime);
   }
 
   private moveUp() {
     this.piece.position.y++;
     this.blank.position.y--;
     const moving = { position: 'top', vector: 1 } as Moving;
-    this.slide(moving, CONFIG.slideTime);
+    this.slide(moving, this.slideTime);
   }
 
   private moveDown() {
     this.piece.position.y--;
     this.blank.position.y++;
     const moving = { position: 'top', vector: -1 } as Moving;
-    this.slide(moving, CONFIG.slideTime);
+    this.slide(moving, this.slideTime);
   }
 
   private slide(moving: Moving, slideTime: number) {
@@ -114,5 +113,9 @@ export class PieceComponent implements OnInit {
 
   isBlank(piece: Piece): boolean {
     return isBlank(piece);
+  }
+
+  get slideTime(): number {
+    return this.gameCondition.config.slideTime;
   }
 }

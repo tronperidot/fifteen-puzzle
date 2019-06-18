@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChildren } from '@angular/core';
 import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
 import { GameConditionService, pieceSort, isBlank, canMovingIndex } from 'src/app/services/game-condition.service';
-import { CONFIG } from 'src/app/util/constants';
 
 @Component({
   selector: 'app-game-area',
@@ -12,6 +11,7 @@ export class GameAreaComponent implements OnInit, OnChanges {
   @Input() gameWidth: number;
   @ViewChildren(PieceComponent) children: QueryList<PieceComponent>;
   displayStyle = this.displayStyle = this.buildDisplayStyle(this.gameWidth);
+  selectedSideValue = 3;
 
   pieces: Piece[];
 
@@ -28,7 +28,8 @@ export class GameAreaComponent implements OnInit, OnChanges {
   }
 
   onStart() {
-    this.gameStart(CONFIG.side);
+    this.gameCondition.config.side = this.selectedSideValue;
+    this.gameStart(this.gameCondition.config.side);
   }
 
   pieceAction() {
@@ -87,17 +88,22 @@ export class GameAreaComponent implements OnInit, OnChanges {
   private shuffle(): void {
     const children = this.children.toArray();
     const history: number[] = [];
+    const config = this.gameCondition.config;
     for (let idx = 0; idx < 50; idx++) {
       setTimeout(() => {
         const pieces = this.pieces.sort(pieceSort);
         const blankIdx = pieces.findIndex(isBlank);
         // 自然な感じになるように一つ前のポジションにならないようにさせる。
-        const canMoving = canMovingIndex(blankIdx, CONFIG.side).filter((p) => p !== history[history.length - 2]);
+        const canMoving = canMovingIndex(blankIdx, config.side).filter((p) => p !== history[history.length - 2]);
         const pos = canMoving[this.random(canMoving.length)];
         history.push(pos);
         const tapPiece = pieces[pos];
-        children.find((c) => c.piece.id === tapPiece.id).onTap();
-      }, (CONFIG.slideTime + 10) * idx);
+        console.log(tapPiece);
+        const child = children.find((c) => tapPiece && c.piece.id === tapPiece.id);
+        if (child) {
+          child.onTap();
+        }
+      }, (config.slideTime + 10) * idx);
     }
   }
 
