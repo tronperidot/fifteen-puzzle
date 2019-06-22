@@ -2,6 +2,8 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges, QueryList, ViewChil
 import { Piece, PieceComponent } from 'src/app/piece/piece/piece.component';
 import { GameConditionService, pieceSort, isBlank, canMovingIndex } from 'src/app/services/game-condition.service';
 import * as Phaser from 'phaser';
+import { SlideGame } from './slide-pazzle/slide-game';
+import { GameScene } from './slide-pazzle/game-scene';
 
 @Component({
   selector: 'app-game-area',
@@ -22,14 +24,22 @@ export class GameAreaComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
+
     const config: Phaser.Types.Core.GameConfig = {
-      width: 600,
+      title: 'Starfall',
+      width: 800,
       height: 600,
-      type: Phaser.AUTO,
-      parent: 'content',
-      scene: { preload: this.preload, create: this.create },
+      parent: 'game',
+      scene: [new GameScene()],
+      physics: {
+        default: 'arcade',
+        arcade: {
+          debug: false
+        }
+      },
+      backgroundColor: '#18216D',
     };
-    this.game = new Phaser.Game(config);
+    this.game = new SlideGame(config);
   }
 
   ngOnChanges(changes: SimpleChanges) {
